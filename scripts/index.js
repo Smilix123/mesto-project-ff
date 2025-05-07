@@ -8,13 +8,14 @@ function createCard(cardData) {
   cardElement.querySelector(".card__title").textContent = cardData.name;
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
+
+  const deleteButton = cardElement.querySelector(".card__delete-button");
+  deleteButton.addEventListener("click", () => deleteCard(cardElement));
   return cardElement;
 }
 
-function addCard(cardData, deleteHandler) {
+function addCard(cardData) {
   const cardElement = createCard(cardData);
-  const deleteButton = cardElement.querySelector(".card__delete-button");
-  deleteButton.addEventListener("click", () => deleteHandler(cardElement));
   cardsContainer.append(cardElement);
 }
 
@@ -22,4 +23,4 @@ function deleteCard(cardElement) {
   cardElement.remove();
 }
 
-initialCards.forEach((cardData) => addCard(cardData, deleteCard));
+initialCards.forEach((cardData) => addCard(cardData));
