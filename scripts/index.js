@@ -22,5 +22,3 @@ function deleteCard(cardElement) {
 initialCards.forEach((cardData) =>
   cardsContainer.append(createCard(cardData, deleteCard))
 );
-
-initialCards.forEach((cardData) => addCard(cardData));
