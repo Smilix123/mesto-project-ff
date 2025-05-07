@@ -12,17 +12,15 @@ function createCard(cardData, deleteHandler) {
   cardImage.alt = cardData.name;
 
   deleteButton.addEventListener("click", () => deleteHandler(cardElement));
-
   return cardElement;
-}
-
-function addCard(cardData) {
-  const cardElement = createCard(cardData, deleteCard);
-  cardsContainer.append(cardElement);
 }
 
 function deleteCard(cardElement) {
   cardElement.remove();
 }
+
+initialCards.forEach((cardData) =>
+  cardsContainer.append(createCard(cardData, deleteCard))
+);
 
 initialCards.forEach((cardData) => addCard(cardData));
