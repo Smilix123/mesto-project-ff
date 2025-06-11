@@ -1,33 +1,35 @@
 import "./pages/index.css";
 
-import { initialCards } from "./scripts/cards";
+import { initialCards } from "./components/cards";
 import { createCard, deleteCard, likeCard } from "./components/card";
 import { openModal, closeModal } from "./components/modal";
 import { fillForm, modalReset } from "./components/form";
 
 const container = document.querySelector(".content");
 const cardsContainer = container.querySelector(".places__list");
-
 const profileEditButton = document.querySelector(".profile__edit-button");
 const profileAddButton = document.querySelector(".profile__add-button");
 const profileAddModal = document.querySelector(".popup_type_new-card");
-const profileAddForm = profileAddModal.querySelector(".popup__form");
-
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const profileEditModal = document.querySelector(".popup_type_edit");
-const profileEditForm = profileEditModal.querySelector(".popup__form");
+const profileEditForm = document.forms["edit-profile"];
+const profileAddForm = document.forms["new-place"];
 const nameInput = profileEditForm.querySelector(".popup__input_type_name");
 const descriptionInput = profileEditForm.querySelector(
   ".popup__input_type_description"
 );
 const titleInput = profileAddForm.querySelector(".popup__input_type_card-name");
 const urlInput = profileAddForm.querySelector(".popup__input_type_url");
-
 const modalArray = document.querySelectorAll(".popup");
 
 initialCards.forEach((cardData) => {
-  const card = createCard(cardData, deleteCard, likeCard, openCardModal);
+  const card = createCard({
+    cardData,
+    onDelete: deleteCard,
+    onLike: likeCard,
+    onImageClick: openCardModal,
+  });
   cardsContainer.append(card);
 });
 
@@ -44,7 +46,6 @@ profileEditForm.addEventListener("submit", (e) => {
 });
 
 profileAddButton.addEventListener("click", () => {
-  modalReset(profileAddForm);
   openModal(profileAddModal);
 });
 
@@ -68,8 +69,14 @@ profileAddForm.addEventListener("submit", async (e) => {
   try {
     await loadImage(cardData.link);
     closeModal(profileAddModal);
+    modalReset(profileAddForm);
 
-    const card = createCard(cardData, deleteCard, likeCard, openCardModal);
+    const card = createCard({
+      cardData,
+      onDelete: deleteCard,
+      onLike: likeCard,
+      onImageClick: openCardModal,
+    });
     cardsContainer.prepend(card);
   } catch (error) {
     console.error(error);

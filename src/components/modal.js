@@ -1,5 +1,8 @@
 function openModal(modal) {
-  modal.classList.add("popup_is-opened", "popup_is-animated")
+  modal.classList.add("popup_is-animated");
+  setTimeout(() => {
+    modal.classList.add("popup_is-opened");
+  }, 1);
   document.addEventListener("keydown", handleEscClose);
 }
 
@@ -9,9 +12,11 @@ function closeModal(modal) {
 }
 
 function handleEscClose(e) {
-  const modal = document.querySelector(".popup_is-opened");
-  if (e.key === "Escape" && modal) {
-    closeModal(modal);
+  if (e.key === "Escape") {
+    const modal = document.querySelector(".popup_is-opened");
+    if (modal) {
+      closeModal(modal);
+    }
   }
 }
 
