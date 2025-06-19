@@ -1,0 +1,10 @@
+.popup__button_inactive {
+  opacity: 0.2;
+  color: #000;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #000;
+}
+
+.form__input_type_error {
+  border-bottom: 1px solid red;
+}

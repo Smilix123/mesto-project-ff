@@ -2,7 +2,6 @@ import "./pages/index.css";
 
 import { initialCards } from "./components/cards";
 import { createCard, deleteCard, likeCard } from "./components/card";
-import { openModal, closeModal } from "./components/modal";
 import { fillForm, modalReset } from "./components/form";
 
 const container = document.querySelector(".content");
@@ -33,8 +32,37 @@ initialCards.forEach((cardData) => {
   cardsContainer.append(card);
 });
 
+function openModal(modal) {
+  modal.classList.add("popup_is-animated");
+  setTimeout(() => {
+    modal.classList.add("popup_is-opened");
+  }, 1);
+  document.addEventListener("keydown", handleEscClose);
+}
+
+function closeModal(modal) {
+  modal.classList.remove("popup_is-opened");
+  document.removeEventListener("keydown", handleEscClose);
+}
+
+function handleEscClose(e) {
+  if (e.key === "Escape") {
+    const modal = document.querySelector(".popup_is-opened");
+    if (modal) {
+      closeModal(modal);
+    }
+  }
+}
+
 profileEditButton.addEventListener("click", () => {
   fillForm([nameInput, descriptionInput], [profileTitle, profileDescription]);
+  const fieldset = profileEditModal.querySelector(".popup__form_set");
+  const inputList = Array.from(fieldset.querySelectorAll(".popup__input"));
+  const buttonElement = fieldset.querySelector(".popup__button");
+  inputList.forEach((inputElement) => {
+    checkInputValidity(fieldset, inputElement);
+  });
+  toggleButtonState(inputList, buttonElement);
   openModal(profileEditModal);
 });
 
@@ -111,3 +139,92 @@ function openCardModal(
   modal.querySelector(".popup__caption").textContent = title.textContent;
   openModal(modal);
 }
+
+const showInputError = (formElement, inputElement, errorMessage) => {
+  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  inputElement.classList.add("form__input_type_error");
+  errorElement.textContent = errorMessage;
+  errorElement.classList.add("form__input-error");
+};
+
+const hideInputError = (formElement, inputElement) => {
+  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  inputElement.classList.remove("form__input_type_error");
+  errorElement.classList.remove("form__input-error");
+  errorElement.textContent = "";
+};
+
+const checkInputValidity = (formElement, inputElement) => {
+  console.log(
+    "validity.patternMismatch -",
+    inputElement.validity.patternMismatch
+  );
+  if (inputElement.validity.patternMismatch) {
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+  } else {
+    inputElement.setCustomValidity("");
+  }
+  console.log("valid - ", inputElement.validity.valid);
+  if (!inputElement.validity.valid) {
+    showInputError(formElement, inputElement, inputElement.validationMessage);
+  } else {
+    hideInputError(formElement, inputElement);
+  }
+  console.groupEnd();
+};
+
+const setEventListeners = (formElement) => {
+  const inputList = Array.from(formElement.querySelectorAll(".popup__input"));
+  const buttonElement = formElement.querySelector(".popup__button");
+  toggleButtonState(inputList, buttonElement);
+  inputList.forEach((inputElement) => {
+    inputElement.addEventListener("input", function (e) {
+      console.group("input");
+      if (e instanceof InputEvent) {
+        console.log("InputEvent! Тип действия:", e.inputType);
+      } else if (e instanceof Event) {
+        console.log("Базовое Event");
+      }
+      console.log("e.type", e.inputType);
+      console.log(`inputElement.value "${inputElement.value}"`);
+
+      console.log(e);
+      console.log("e.data - ", e.data);
+      checkInputValidity(formElement, inputElement);
+      toggleButtonState(inputList, buttonElement);
+    });
+  });
+};
+
+const enableValidation = () => {
+  const formList = Array.from(document.querySelectorAll(".popup__form"));
+  formList.forEach((formElement) => {
+    formElement.addEventListener("submit", function (evt) {
+      evt.preventDefault();
+    });
+    const fieldsetList = Array.from(
+      formElement.querySelectorAll(".popup__form_set")
+    );
+    fieldsetList.forEach((fieldSet) => {
+      setEventListeners(fieldSet);
+    });
+  });
+};
+
+const hasInvalidInput = (inputList) => {
+  return inputList.some((inputElement) => {
+    return !inputElement.validity.valid;
+  });
+};
+
+const toggleButtonState = (inputList, buttonElement) => {
+  if (hasInvalidInput(inputList)) {
+    buttonElement.classList.add("popup__button_inactive");
+    buttonElement.setAttribute("disabled", "");
+  } else {
+    buttonElement.classList.remove("popup__button_inactive");
+    buttonElement.removeAttribute("disabled", "");
+  }
+};
+
+enableValidation();
