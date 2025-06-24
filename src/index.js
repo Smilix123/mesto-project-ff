@@ -3,7 +3,8 @@ import "./pages/index.css";
 import { initialCards } from "./components/cards";
 import { createCard, deleteCard, likeCard } from "./components/card";
 import { fillForm, modalReset } from "./components/form";
-import { toggleButtonState, clearValidation, enableValidation } from "./components/validation";
+import { clearValidation, enableValidation } from "./components/validation";
+import { getUserDataApi, getCardsApi } from "./components/api";
 
 const container = document.querySelector(".content");
 const cardsContainer = container.querySelector(".places__list");
@@ -21,6 +22,9 @@ const titleInput = profileAddForm.querySelector(".popup__input_type_card-name");
 const urlInput = profileAddForm.querySelector(".popup__input_type_url");
 const modalArray = document.querySelectorAll(".popup");
 
+const profileAvatar = document.querySelector(".profile__image");
+let currentUserId = null;
+
 const validationConfig = {
   formSelector: ".popup__form",
   inputSelector: ".popup__input",
@@ -30,7 +34,7 @@ const validationConfig = {
   errorClass: "popup__error_visible",
 };
 
-initialCards.forEach((cardData) => {
+/* initialCards.forEach((cardData) => {
   const card = createCard({
     cardData,
     onDelete: deleteCard,
@@ -38,7 +42,30 @@ initialCards.forEach((cardData) => {
     onImageClick: openCardModal,
   });
   cardsContainer.append(card);
-});
+}); */
+
+Promise.all([getUserDataApi(), getCardsApi()])
+  .then(([userData, initialCards]) => {
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
+    currentUserId = userData._id;
+
+    initialCards.forEach((card) => {
+      const cardData = {
+        name: card.name,
+        link: card.link,
+      };
+      const test = createCard({
+        cardData,
+        onDelete: deleteCard,
+        onLike: likeCard,
+        onImageClick: openCardModal,
+      });
+      cardsContainer.append(test);
+    });
+  })
+  .catch((error) => console.log(error));
 
 function openModal(modal) {
   modal.classList.add("popup_is-animated");
@@ -64,12 +91,7 @@ function handleEscClose(e) {
 
 profileEditButton.addEventListener("click", () => {
   fillForm([nameInput, descriptionInput], [profileTitle, profileDescription]);
-  const fieldset = profileEditModal.querySelector(".popup__form_set");
-  const inputList = Array.from(fieldset.querySelectorAll(validationConfig.inputSelector));
-  inputList.forEach((inputElement) => {
-    checkInputValidity(fieldset, inputElement, validationConfig);
-  });
-  toggleButtonState(fieldset, validationConfig);
+  clearValidation(profileEditModal, validationConfig);
   openModal(profileEditModal);
 });
 
@@ -81,8 +103,7 @@ profileEditForm.addEventListener("submit", (e) => {
 });
 
 profileAddButton.addEventListener("click", () => {
-  const fieldset = profileAddModal.querySelector(".popup__form_set");
-  toggleButtonState(fieldset, validationConfig);
+  clearValidation(profileAddModal, validationConfig);
   openModal(profileAddModal);
 });
 

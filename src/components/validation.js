@@ -1,4 +1,4 @@
-export { toggleButtonState, clearValidation, enableValidation };
+export { clearValidation, enableValidation };
 
 const showInputError = (formElement, inputElement, errorMessage, validationConfig) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -69,11 +69,11 @@ const toggleButtonState = (fieldset, validationConfig) => {
   }
 };
 
-const clearValidation = (formElement, validationConfig) => {
-  const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
-  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
+const clearValidation = (modal, validationConfig) => {
+  const fieldset = modal.querySelector(".popup__form_set");
+  const inputList = Array.from(modal.querySelectorAll(validationConfig.inputSelector));
   inputList.forEach((inputElement) => {
-    hideInputError(formElement, inputElement, validationConfig);
+    hideInputError(fieldset, inputElement, validationConfig);
   });
-  toggleButtonState(inputList, buttonElement, validationConfig);
+  toggleButtonState(fieldset, validationConfig);
 };
