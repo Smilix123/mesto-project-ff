@@ -3,7 +3,13 @@ import "./pages/index.css";
 import { createCard, deleteCard, likeCard } from "./components/card";
 import { fillForm, modalReset } from "./components/form";
 import { clearValidation, enableValidation } from "./components/validation";
-import { getUserDataApi, updateAvatarApi, getCardsApi, editUserDataApi } from "./components/api";
+import {
+  getUserDataApi,
+  updateAvatarApi,
+  addNewCardApi,
+  getCardsApi,
+  editUserDataApi,
+} from "./components/api";
 
 const container = document.querySelector(".content");
 const cardsContainer = container.querySelector(".places__list");
@@ -134,6 +140,27 @@ function loadImage(url) {
     img.onerror = () => reject(new Error(`Ошибка загрузки изображения: ${url}`));
     img.src = url;
   });
+}
+
+profileAddForm.addEventListener("submit", handleAddCard);
+
+function handleAddCard(e) {
+  e.preventDefault();
+  const name = titleInput.value;
+  const link = urlInput.value;
+
+  addNewCardApi(name, link)
+    .then((cardData) => {
+      const card = createCard({
+        cardData,
+        onDelete: deleteCard,
+        onLike: likeCard,
+        onImageClick: openCardModal,
+      });
+      cardsContainer.append(card);
+      closeModal(profileAddModal);
+    })
+    .catch((err) => console.log(err));
 }
 
 profileAddForm.addEventListener("submit", async (e) => {

@@ -40,3 +40,11 @@ export const updateAvatarApi = (avatar) => {
     body: JSON.stringify({ avatar }),
   }).then(getResponse);
 };
+
+export const addNewCardApi = (name, link) => {
+  return fetch(`${config.baseUrl}/cards`, {
+    method: "POST",
+    headers: config.headers,
+    body: JSON.stringify({ name, link }),
+  }).then(getResponse);
+};
