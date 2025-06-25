@@ -1,0 +1,6 @@
+.profile__image_edit {
+  position: absolute;
+  width: 25%;
+  opacity: 0;
+	transition: opacity 0.3s;
+}

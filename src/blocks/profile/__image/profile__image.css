@@ -1,12 +1,39 @@
 .profile__image {
+  position: relative;
+  display: grid;
+  place-items: center;
   width: 120px;
   height: 120px;
+  margin: 0 29px 0 0;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
-  border-radius: 50%;
-  background-size: cover;
+  border-radius: 50% 50%;
+  object-fit: cover;
+  overflow: hidden;
   background-position: center;
-  margin: 0 29px 0 0;
+  background-size: cover;
+  transition: background-color 0.3s;
+  transition: opacity 0.3s;
+  cursor: pointer;
+}
+
+.profile__image::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  transition: opacity 0.3s;
+}
+
+.profile__image:hover::before {
+  opacity: 1;
+}
+
+.profile__image:hover .profile__image_edit {
+  opacity: 1;
 }
 
 @media screen and (max-width: 740px) {

@@ -1,10 +1,9 @@
 import "./pages/index.css";
 
-import { initialCards } from "./components/cards";
 import { createCard, deleteCard, likeCard } from "./components/card";
 import { fillForm, modalReset } from "./components/form";
 import { clearValidation, enableValidation } from "./components/validation";
-import { getUserDataApi, getCardsApi } from "./components/api";
+import { getUserDataApi, updateAvatarApi, getCardsApi, editUserDataApi } from "./components/api";
 
 const container = document.querySelector(".content");
 const cardsContainer = container.querySelector(".places__list");
@@ -22,6 +21,9 @@ const titleInput = profileAddForm.querySelector(".popup__input_type_card-name");
 const urlInput = profileAddForm.querySelector(".popup__input_type_url");
 const modalArray = document.querySelectorAll(".popup");
 
+const avatarEditModal = document.querySelector(".popup_type_avatar");
+const avatarEditInput = avatarEditModal.querySelector(".popup__input_type_avatar");
+const avatarEditForm = document.forms["edit-avatar"];
 const profileAvatar = document.querySelector(".profile__image");
 let currentUserId = null;
 
@@ -95,12 +97,30 @@ profileEditButton.addEventListener("click", () => {
   openModal(profileEditModal);
 });
 
-profileEditForm.addEventListener("submit", (e) => {
+profileEditForm.addEventListener("submit", handleEditUserData);
+
+/*
+function handleEditUserData(e) {
   e.preventDefault();
   profileTitle.textContent = nameInput.value;
   profileDescription.textContent = descriptionInput.value;
   closeModal(profileEditModal);
-});
+}
+*/
+
+function handleEditUserData(e) {
+  e.preventDefault();
+  const name = nameInput.value;
+  const description = descriptionInput.value;
+
+  editUserDataApi(name, description)
+    .then((userData) => {
+      profileTitle.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      closeModal(profileEditModal);
+    })
+    .catch((err) => console.log(err));
+}
 
 profileAddButton.addEventListener("click", () => {
   clearValidation(profileAddModal, validationConfig);
@@ -149,6 +169,24 @@ profileAddForm.addEventListener("submit", async (e) => {
     }, 3000);
   }
 });
+
+profileAvatar.addEventListener("click", () => {
+  clearValidation(avatarEditModal, validationConfig);
+  openModal(avatarEditModal);
+});
+
+function handleEditAvatar(e) {
+  e.preventDefault();
+  const avatarUrl = avatarEditInput.value;
+  updateAvatarApi(avatarUrl)
+    .then((avatarUrl) => {
+      profileAvatar.style.backgroundImage = `url(${avatarUrl.avatar})`;
+      closeModal(avatarEditModal);
+    })
+    .catch((err) => console.log(err));
+}
+
+avatarEditForm.addEventListener("submit", handleEditAvatar);
 
 modalArray.forEach((modal) => {
   modal.addEventListener("mousedown", (e) => {
