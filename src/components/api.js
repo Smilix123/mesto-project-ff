@@ -48,3 +48,19 @@ export const addNewCardApi = (name, link) => {
     body: JSON.stringify({ name, link }),
   }).then(getResponse);
 };
+
+export const setLikeApi = (cardId, isLiked) => {
+  const method = isLiked ? "DELETE" : "PUT";
+
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method,
+    headers: config.headers,
+  }).then(getResponse);
+};
+
+export const deleteCardApi = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then(getResponse);
+};

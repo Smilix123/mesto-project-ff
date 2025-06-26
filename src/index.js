@@ -1,7 +1,6 @@
 import "./pages/index.css";
 
 import { createCard, deleteCard, likeCard } from "./components/card";
-import { fillForm, modalReset } from "./components/form";
 import { clearValidation, enableValidation } from "./components/validation";
 import {
   getUserDataApi,
@@ -42,6 +41,12 @@ const validationConfig = {
   errorClass: "popup__error_visible",
 };
 
+function fillForm(inputsArray, dataArray) {
+  inputsArray.forEach((input, index) => {
+    input.value = dataArray[index].textContent;
+  });
+}
+
 /* initialCards.forEach((cardData) => {
   const card = createCard({
     cardData,
@@ -61,16 +66,20 @@ Promise.all([getUserDataApi(), getCardsApi()])
 
     initialCards.forEach((card) => {
       const cardData = {
+        id: card._id,
+        ownerId: card.owner._id,
+        userId: currentUserId,
         name: card.name,
         link: card.link,
+        likes: card.likes,
       };
-      const test = createCard({
+      const newCard = createCard({
         cardData,
         onDelete: deleteCard,
         onLike: likeCard,
         onImageClick: openCardModal,
       });
-      cardsContainer.append(test);
+      cardsContainer.append(newCard);
     });
   })
   .catch((error) => console.log(error));
@@ -150,52 +159,26 @@ function handleAddCard(e) {
   const link = urlInput.value;
 
   addNewCardApi(name, link)
-    .then((cardData) => {
-      const card = createCard({
+    .then((card) => {
+      const cardData = {
+        id: card._id,
+        ownerId: card.owner._id,
+        userId: currentUserId,
+        name: card.name,
+        link: card.link,
+        likes: card.likes,
+      };
+      const newCard = createCard({
         cardData,
         onDelete: deleteCard,
         onLike: likeCard,
         onImageClick: openCardModal,
       });
-      cardsContainer.append(card);
+      cardsContainer.prepend(newCard);
       closeModal(profileAddModal);
     })
     .catch((err) => console.log(err));
 }
-
-profileAddForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const cardData = {
-    name: titleInput.value,
-    link: urlInput.value,
-  };
-
-  try {
-    await loadImage(cardData.link);
-    closeModal(profileAddModal);
-    modalReset(profileAddForm);
-
-    const card = createCard({
-      cardData,
-      onDelete: deleteCard,
-      onLike: likeCard,
-      onImageClick: openCardModal,
-    });
-    cardsContainer.prepend(card);
-  } catch (error) {
-    console.error(error);
-    const errorElement = document.createElement("div");
-    errorElement.classList.add("error-message");
-    errorElement.textContent = "Не удалось загрузить изображение";
-    profileAddForm.appendChild(errorElement);
-
-    setTimeout(() => {
-      if (profileAddForm.contains(errorElement)) {
-        profileAddForm.removeChild(errorElement);
-      }
-    }, 3000);
-  }
-});
 
 profileAvatar.addEventListener("click", () => {
   clearValidation(avatarEditModal, validationConfig);
