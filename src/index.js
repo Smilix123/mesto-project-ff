@@ -112,19 +112,9 @@ profileEditButton.addEventListener("click", () => {
   openModal(profileEditModal);
 });
 
-profileEditForm.addEventListener("submit", handleEditUserData);
-
-/*
 function handleEditUserData(e) {
   e.preventDefault();
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = descriptionInput.value;
-  closeModal(profileEditModal);
-}
-*/
-
-function handleEditUserData(e) {
-  e.preventDefault();
+  renderLoading(true, profileEditForm);
   const name = nameInput.value;
   const description = descriptionInput.value;
 
@@ -132,9 +122,12 @@ function handleEditUserData(e) {
     .then((userData) => {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
-      closeModal(profileEditModal);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => {
+      renderLoading(false, profileEditForm);
+      closeModal(profileEditModal);
+    });
 }
 
 profileAddButton.addEventListener("click", () => {
@@ -142,19 +135,10 @@ profileAddButton.addEventListener("click", () => {
   openModal(profileAddModal);
 });
 
-function loadImage(url) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error(`Ошибка загрузки изображения: ${url}`));
-    img.src = url;
-  });
-}
-
-profileAddForm.addEventListener("submit", handleAddCard);
-
 function handleAddCard(e) {
   e.preventDefault();
+  renderLoading(true, profileAddForm);
+
   const name = titleInput.value;
   const link = urlInput.value;
 
@@ -175,9 +159,13 @@ function handleAddCard(e) {
         onImageClick: openCardModal,
       });
       cardsContainer.prepend(newCard);
-      closeModal(profileAddModal);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => {
+      renderLoading(false, profileAddForm);
+      profileAddForm.reset();
+      closeModal(profileAddModal);
+    });
 }
 
 profileAvatar.addEventListener("click", () => {
@@ -187,16 +175,19 @@ profileAvatar.addEventListener("click", () => {
 
 function handleEditAvatar(e) {
   e.preventDefault();
+  renderLoading(true, avatarEditForm);
   const avatarUrl = avatarEditInput.value;
   updateAvatarApi(avatarUrl)
-    .then((avatarUrl) => {
-      profileAvatar.style.backgroundImage = `url(${avatarUrl.avatar})`;
-      closeModal(avatarEditModal);
+    .then((data) => {
+      profileAvatar.style.backgroundImage = `url(${data.avatar})`;
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err))
+    .finally(() => {
+      renderLoading(false, avatarEditForm);
+      avatarEditForm.reset();
+      closeModal(avatarEditModal);
+    });
 }
-
-avatarEditForm.addEventListener("submit", handleEditAvatar);
 
 modalArray.forEach((modal) => {
   modal.addEventListener("mousedown", (e) => {
@@ -213,4 +204,19 @@ function openCardModal(img, title, modal = document.querySelector(".popup_type_i
   openModal(modal);
 }
 
+const renderLoading = (isLoading, formElement) => {
+  const buttonElement = formElement.querySelector(".popup__button");
+  if (isLoading) {
+    buttonElement.setAttribute("data-text", buttonElement.textContent);
+    buttonElement.textContent = "Сохранение...";
+  } else {
+    buttonElement.textContent = buttonElement.getAttribute("data-text");
+    buttonElement.removeAttribute("data-text");
+  }
+};
+
 enableValidation(validationConfig);
+
+profileAddForm.addEventListener("submit", handleAddCard);
+profileEditForm.addEventListener("submit", handleEditUserData);
+avatarEditForm.addEventListener("submit", handleEditAvatar);

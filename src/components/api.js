@@ -18,7 +18,7 @@ export const getCardsApi = () => {
   }).then(getResponse);
 };
 
-export const getResponse = (res) => {
+const getResponse = (res) => {
   if (res.ok) {
     return res.json();
   }
