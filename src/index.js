@@ -205,7 +205,7 @@ function openCardModal(img, title, modal = document.querySelector(".popup_type_i
 }
 
 const renderLoading = (isLoading, formElement) => {
-  const buttonElement = formElement.querySelector(".popup__button");
+  const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
   if (isLoading) {
     buttonElement.setAttribute("data-text", buttonElement.textContent);
     buttonElement.textContent = "Сохранение...";
