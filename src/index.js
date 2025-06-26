@@ -82,7 +82,7 @@ Promise.all([getUserDataApi(), getCardsApi()])
       cardsContainer.append(newCard);
     });
   })
-  .catch((error) => console.log(error));
+  .catch((err) => console.log(err));
 
 function openModal(modal) {
   modal.classList.add("popup_is-animated");
@@ -122,11 +122,11 @@ function handleEditUserData(e) {
     .then((userData) => {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
+      closeModal(profileEditModal);
     })
     .catch((err) => console.log(err))
     .finally(() => {
       renderLoading(false, profileEditForm);
-      closeModal(profileEditModal);
     });
 }
 
@@ -159,12 +159,12 @@ function handleAddCard(e) {
         onImageClick: openCardModal,
       });
       cardsContainer.prepend(newCard);
+      profileAddForm.reset();
+      closeModal(profileAddModal);
     })
     .catch((err) => console.log(err))
     .finally(() => {
       renderLoading(false, profileAddForm);
-      profileAddForm.reset();
-      closeModal(profileAddModal);
     });
 }
 
@@ -180,12 +180,12 @@ function handleEditAvatar(e) {
   updateAvatarApi(avatarUrl)
     .then((data) => {
       profileAvatar.style.backgroundImage = `url(${data.avatar})`;
+      avatarEditForm.reset();
+      closeModal(avatarEditModal);
     })
     .catch((err) => console.log(err))
     .finally(() => {
       renderLoading(false, avatarEditForm);
-      avatarEditForm.reset();
-      closeModal(avatarEditModal);
     });
 }
 
