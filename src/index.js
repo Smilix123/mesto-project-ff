@@ -14,7 +14,7 @@ const container = document.querySelector(".content");
 const cardsContainer = container.querySelector(".places__list");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const deleteModal = document.querySelector(".popup_type_delete");
-const deleteForm = document.forms["confirm-delete-card"];
+export const deleteForm = document.forms["confirm-delete-card"];
 const profileAddButton = document.querySelector(".profile__add-button");
 const profileAddModal = document.querySelector(".popup_type_new-card");
 const profileTitle = document.querySelector(".profile__title");
@@ -93,14 +93,14 @@ function confirmDelete(cardElement, cardId) {
   deleteForm.dataset.cardElementId = cardElement.id;
 }
 
-deleteForm.addEventListener("submit", function (e) {
+function handleDeleteCard(e) {
   e.preventDefault();
-
+  renderLoading(true, deleteForm);
   const cardId = deleteForm.dataset.cardId;
   const cardElement = document.getElementById(deleteForm.dataset.cardElementId);
   deleteCard(cardElement, cardId);
   closeModal(deleteModal);
-});
+}
 
 function handleEscClose(e) {
   if (e.key === "Escape") {
@@ -209,7 +209,7 @@ function openCardModal(img, title, modal = document.querySelector(".popup_type_i
   openModal(modal);
 }
 
-const renderLoading = (isLoading, formElement) => {
+export const renderLoading = (isLoading, formElement) => {
   const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
   if (isLoading) {
     buttonElement.setAttribute("data-text", buttonElement.textContent);
@@ -220,8 +220,9 @@ const renderLoading = (isLoading, formElement) => {
   }
 };
 
-enableValidation(validationConfig);
-
 profileAddForm.addEventListener("submit", handleAddCard);
 profileEditForm.addEventListener("submit", handleEditUserData);
 avatarEditForm.addEventListener("submit", handleEditAvatar);
+deleteForm.addEventListener("submit", handleDeleteCard);
+
+enableValidation(validationConfig);
