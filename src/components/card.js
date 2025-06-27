@@ -40,11 +40,13 @@ function deleteCard(cardElement, cardId) {
   deleteCardApi(cardId)
     .then(() => {
       cardElement.remove();
-      renderLoading(false, deleteForm);
       closeModal(deleteModal);
     })
     .catch((err) => {
       console.log(`Ошибка при удалении карточки: ${err}`);
+    })
+    .finally(() => {
+      renderLoading(false, deleteForm);
     });
 }
 
