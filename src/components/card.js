@@ -1,5 +1,3 @@
-import { setLikeApi } from "./api";
-
 const cardTemplate = document.querySelector("#card-template").content;
 
 function createCard({ cardData, onDelete, onLike, onImageClick }) {
@@ -35,15 +33,4 @@ function createCard({ cardData, onDelete, onLike, onImageClick }) {
   return cardElement;
 }
 
-function likeCard(likeButton, cardId, likesCount) {
-  const isLiked = likeButton.classList.contains("card__like-button_is-active");
-
-  setLikeApi(cardId, isLiked)
-    .then((updatedCard) => {
-      likeButton.classList.toggle("card__like-button_is-active");
-      likesCount.textContent = updatedCard.likes.length;
-    })
-    .catch((err) => console.log(err));
-}
-
-export { createCard, likeCard };
+export { createCard };
