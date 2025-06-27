@@ -74,6 +74,7 @@ const clearValidation = (modal, validationConfig) => {
   const inputList = Array.from(modal.querySelectorAll(validationConfig.inputSelector));
   inputList.forEach((inputElement) => {
     hideInputError(fieldset, inputElement, validationConfig);
+    inputElement.setCustomValidity("");
   });
   toggleButtonState(fieldset, validationConfig);
 };

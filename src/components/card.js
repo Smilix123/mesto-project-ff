@@ -1,5 +1,4 @@
-import { setLikeApi, deleteCardApi } from "./api";
-import { renderLoading, deleteForm, closeModal, deleteModal } from "../index.js";
+import { setLikeApi } from "./api";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -36,20 +35,6 @@ function createCard({ cardData, onDelete, onLike, onImageClick }) {
   return cardElement;
 }
 
-function deleteCard(cardElement, cardId) {
-  deleteCardApi(cardId)
-    .then(() => {
-      cardElement.remove();
-      closeModal(deleteModal);
-    })
-    .catch((err) => {
-      console.log(`Ошибка при удалении карточки: ${err}`);
-    })
-    .finally(() => {
-      renderLoading(false, deleteForm);
-    });
-}
-
 function likeCard(likeButton, cardId, likesCount) {
   const isLiked = likeButton.classList.contains("card__like-button_is-active");
 
@@ -61,4 +46,4 @@ function likeCard(likeButton, cardId, likesCount) {
     .catch((err) => console.log(err));
 }
 
-export { createCard, deleteCard, likeCard };
+export { createCard, likeCard };

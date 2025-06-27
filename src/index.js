@@ -1,6 +1,7 @@
 import "./pages/index.css";
 
-import { createCard, deleteCard, likeCard } from "./components/card";
+import { openModal, closeModal } from "./components/modal";
+import { createCard, likeCard } from "./components/card";
 import { clearValidation, enableValidation } from "./components/validation";
 import {
   getUserDataApi,
@@ -8,13 +9,16 @@ import {
   addNewCardApi,
   getCardsApi,
   editUserDataApi,
+  deleteCardApi,
 } from "./components/api";
 
 const container = document.querySelector(".content");
 const cardsContainer = container.querySelector(".places__list");
 const profileEditButton = document.querySelector(".profile__edit-button");
-export const deleteModal = document.querySelector(".popup_type_delete");
-export const deleteForm = document.forms["confirm-delete-card"];
+
+const deleteModal = document.querySelector(".popup_type_delete");
+const deleteForm = document.forms["confirm-delete-card"];
+
 const profileAddButton = document.querySelector(".profile__add-button");
 const profileAddModal = document.querySelector(".popup_type_new-card");
 const profileTitle = document.querySelector(".profile__title");
@@ -76,16 +80,6 @@ Promise.all([getUserDataApi(), getCardsApi()])
   })
   .catch((err) => console.log(err));
 
-function openModal(modal) {
-  modal.classList.add("popup_is-opened");
-  document.addEventListener("keydown", handleEscClose);
-}
-
-export function closeModal(modal) {
-  modal.classList.remove("popup_is-opened");
-  document.removeEventListener("keydown", handleEscClose);
-}
-
 function confirmDelete(cardElement, cardId) {
   openModal(deleteModal);
   cardElement.setAttribute("id", "card_" + Date.now());
@@ -99,15 +93,6 @@ function handleDeleteCard(e) {
   const cardId = deleteForm.dataset.cardId;
   const cardElement = document.getElementById(deleteForm.dataset.cardElementId);
   deleteCard(cardElement, cardId);
-}
-
-function handleEscClose(e) {
-  if (e.key === "Escape") {
-    const modal = document.querySelector(".popup_is-opened");
-    if (modal) {
-      closeModal(modal);
-    }
-  }
 }
 
 profileEditButton.addEventListener("click", () => {
@@ -172,6 +157,20 @@ function handleAddCard(e) {
     });
 }
 
+function deleteCard(cardElement, cardId) {
+  deleteCardApi(cardId)
+    .then(() => {
+      cardElement.remove();
+      closeModal(deleteModal);
+    })
+    .catch((err) => {
+      console.log(`Ошибка при удалении карточки: ${err}`);
+    })
+    .finally(() => {
+      renderLoading(false, deleteForm);
+    });
+}
+
 profileAvatar.addEventListener("click", () => {
   clearValidation(avatarEditModal, validationConfig);
   openModal(avatarEditModal);
@@ -208,7 +207,7 @@ function openCardModal(img, title, modal = document.querySelector(".popup_type_i
   openModal(modal);
 }
 
-export function renderLoading(isLoading, formElement) {
+function renderLoading(isLoading, formElement) {
   const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
   if (isLoading) {
     buttonElement.setAttribute("data-text", buttonElement.textContent);
