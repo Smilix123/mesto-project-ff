@@ -208,7 +208,7 @@ function openCardModal(img, title, modal = document.querySelector(".popup_type_i
   openModal(modal);
 }
 
-export const renderLoading = (isLoading, formElement) => {
+export function renderLoading(isLoading, formElement) {
   const buttonElement = formElement.querySelector(validationConfig.submitButtonSelector);
   if (isLoading) {
     buttonElement.setAttribute("data-text", buttonElement.textContent);
@@ -217,7 +217,7 @@ export const renderLoading = (isLoading, formElement) => {
     buttonElement.textContent = buttonElement.getAttribute("data-text");
     buttonElement.removeAttribute("data-text");
   }
-};
+}
 
 profileAddForm.addEventListener("submit", handleAddCard);
 profileEditForm.addEventListener("submit", handleEditUserData);
