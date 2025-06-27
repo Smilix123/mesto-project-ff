@@ -13,7 +13,7 @@ import {
 const container = document.querySelector(".content");
 const cardsContainer = container.querySelector(".places__list");
 const profileEditButton = document.querySelector(".profile__edit-button");
-const deleteModal = document.querySelector(".popup_type_delete");
+export const deleteModal = document.querySelector(".popup_type_delete");
 export const deleteForm = document.forms["confirm-delete-card"];
 const profileAddButton = document.querySelector(".profile__add-button");
 const profileAddModal = document.querySelector(".popup_type_new-card");
@@ -81,7 +81,7 @@ function openModal(modal) {
   document.addEventListener("keydown", handleEscClose);
 }
 
-function closeModal(modal) {
+export function closeModal(modal) {
   modal.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", handleEscClose);
 }
@@ -99,7 +99,6 @@ function handleDeleteCard(e) {
   const cardId = deleteForm.dataset.cardId;
   const cardElement = document.getElementById(deleteForm.dataset.cardElementId);
   deleteCard(cardElement, cardId);
-  closeModal(deleteModal);
 }
 
 function handleEscClose(e) {

@@ -1,5 +1,5 @@
 import { setLikeApi, deleteCardApi } from "./api";
-import { renderLoading, deleteForm } from "../index.js";
+import { renderLoading, deleteForm, closeModal, deleteModal } from "../index.js";
 
 const cardTemplate = document.querySelector("#card-template").content;
 
@@ -41,6 +41,7 @@ function deleteCard(cardElement, cardId) {
     .then(() => {
       cardElement.remove();
       renderLoading(false, deleteForm);
+      closeModal(deleteModal);
     })
     .catch((err) => {
       console.log(`Ошибка при удалении карточки: ${err}`);
