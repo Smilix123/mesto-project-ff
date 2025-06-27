@@ -44,7 +44,7 @@
       <footer class="footer page__section">
         <p class="footer__copyright">© 2021 Mesto Russia</p>
       </footer>
-      <div class="popup popup_type_edit">
+      <div class="popup popup_type_edit popup_is-animated">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Редактировать профиль</h3>
@@ -87,7 +87,7 @@
           </form>
         </div>
       </div>
-      <div class="popup popup_type_new-card">
+      <div class="popup popup_type_new-card popup_is-animated">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Новое место</h3>
@@ -126,7 +126,7 @@
           </form>
         </div>
       </div>
-      <div class="popup popup_type_image">
+      <div class="popup popup_type_image popup_is-animated">
         <div class="popup__content popup__content_content_image">
           <button type="button" class="popup__close"></button>
           <img src="" alt="" class="popup__image" />
@@ -134,7 +134,7 @@
         </div>
       </div>
 
-      <div class="popup popup_type_avatar">
+      <div class="popup popup_type_avatar popup_is-animated">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Обновить аватар</h3>
@@ -155,6 +155,16 @@
               </div>
               <button type="submit" class="button popup__button">Сохранить</button>
             </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="popup popup_type_delete popup_is-animated">
+        <div class="popup__content popup__content-delete">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Вы уверены?</h3>
+          <form class="popup__form" name="confirm-delete-card" novalidate>
+            <button type="submit" class="button popup__button">Да</button>
           </form>
         </div>
       </div>

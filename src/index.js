@@ -13,6 +13,8 @@ import {
 const container = document.querySelector(".content");
 const cardsContainer = container.querySelector(".places__list");
 const profileEditButton = document.querySelector(".profile__edit-button");
+const deleteModal = document.querySelector(".popup_type_delete");
+const deleteForm = document.forms["confirm-delete-card"];
 const profileAddButton = document.querySelector(".profile__add-button");
 const profileAddModal = document.querySelector(".popup_type_new-card");
 const profileTitle = document.querySelector(".profile__title");
@@ -47,16 +49,6 @@ function fillForm(inputsArray, dataArray) {
   });
 }
 
-/* initialCards.forEach((cardData) => {
-  const card = createCard({
-    cardData,
-    onDelete: deleteCard,
-    onLike: likeCard,
-    onImageClick: openCardModal,
-  });
-  cardsContainer.append(card);
-}); */
-
 Promise.all([getUserDataApi(), getCardsApi()])
   .then(([userData, initialCards]) => {
     profileTitle.textContent = userData.name;
@@ -75,7 +67,7 @@ Promise.all([getUserDataApi(), getCardsApi()])
       };
       const newCard = createCard({
         cardData,
-        onDelete: deleteCard,
+        onDelete: confirmDelete,
         onLike: likeCard,
         onImageClick: openCardModal,
       });
@@ -85,10 +77,7 @@ Promise.all([getUserDataApi(), getCardsApi()])
   .catch((err) => console.log(err));
 
 function openModal(modal) {
-  modal.classList.add("popup_is-animated");
-  setTimeout(() => {
-    modal.classList.add("popup_is-opened");
-  }, 1);
+  modal.classList.add("popup_is-opened");
   document.addEventListener("keydown", handleEscClose);
 }
 
@@ -96,6 +85,22 @@ function closeModal(modal) {
   modal.classList.remove("popup_is-opened");
   document.removeEventListener("keydown", handleEscClose);
 }
+
+function confirmDelete(cardElement, cardId) {
+  openModal(deleteModal);
+  cardElement.setAttribute("id", "card_" + Date.now());
+  deleteForm.dataset.cardId = cardId;
+  deleteForm.dataset.cardElementId = cardElement.id;
+}
+
+deleteForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const cardId = deleteForm.dataset.cardId;
+  const cardElement = document.getElementById(deleteForm.dataset.cardElementId);
+  deleteCard(cardElement, cardId);
+  closeModal(deleteModal);
+});
 
 function handleEscClose(e) {
   if (e.key === "Escape") {
@@ -154,7 +159,7 @@ function handleAddCard(e) {
       };
       const newCard = createCard({
         cardData,
-        onDelete: deleteCard,
+        onDelete: confirmDelete,
         onLike: likeCard,
         onImageClick: openCardModal,
       });
