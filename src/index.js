@@ -1,7 +1,7 @@
 import "./pages/index.css";
 
 import { openModal, closeModal } from "./components/modal";
-import { createCard } from "./components/card";
+import { createCard, likeCard } from "./components/card";
 import { clearValidation, enableValidation } from "./components/validation";
 import {
   getUserDataApi,
@@ -10,7 +10,6 @@ import {
   getCardsApi,
   editUserDataApi,
   deleteCardApi,
-  setLikeApi,
 } from "./components/api";
 
 const container = document.querySelector(".content");
@@ -170,17 +169,6 @@ function deleteCard(cardElement, cardId) {
     .finally(() => {
       renderLoading(false, deleteForm);
     });
-}
-
-function likeCard(likeButton, cardId, likesCount) {
-  const isLiked = likeButton.classList.contains("card__like-button_is-active");
-
-  setLikeApi(cardId, isLiked)
-    .then((updatedCard) => {
-      likeButton.classList.toggle("card__like-button_is-active");
-      likesCount.textContent = updatedCard.likes.length;
-    })
-    .catch((err) => console.log(err));
 }
 
 profileAvatar.addEventListener("click", () => {
